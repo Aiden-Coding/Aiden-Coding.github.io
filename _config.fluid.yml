@@ -15,7 +15,7 @@ navbar:
     - { key: '工具',
         icon: 'iconfont icon-category-fill',
         submenu: [
-          { key: 'drawio', link: 'https://aiden-coding.github.io/learning/' },
+          { key: 'drawio画图工具', link: 'https://aiden-coding.github.io/learning/' },
         ]
       }
     - { key: 'about', link: '/about/', icon: 'iconfont icon-user-fill', name: '联系我' }
