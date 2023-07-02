@@ -7,6 +7,18 @@ fun_features:
 #    loop: false # 是否循环播放效果
 navbar:
   blog_title: Aiden
+  menu:
+    - { key: 'home', link: '/', icon: 'iconfont icon-home-fill' }
+    - { key: 'archives', link: '/archives/', icon: 'iconfont icon-archive-fill', name: '归档' }
+    - { key: 'categories', link: '/categories/', icon: 'iconfont icon-category-fill', name: '分类' }
+    - { key: 'tag', link: '/tags/', icon: 'iconfont icon-tags-fill' }
+    - { key: '工具',
+        icon: 'iconfont icon-category-fill',
+        submenu: [
+          { key: 'drawio', link: 'https://aiden-coding.github.io/learning/' },
+        ]
+      }
+    - { key: 'about', link: '/about/', icon: 'iconfont icon-user-fill', name: '联系我' }
 index:
   slogan:
     enable: true
@@ -16,3 +28,4 @@ index:
     enable: true
   # 文章跳转方式
   post_url_target: _self
+
