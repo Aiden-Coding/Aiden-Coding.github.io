@@ -14,15 +14,7 @@ navbar:
     - { key: 'tag', link: '/tags/', icon: 'iconfont icon-tags-fill' }
     - { key: 'links', link: '/links/', icon: 'iconfont icon-link-fill' }
     - { key: 'about', link: '/about/', icon: 'iconfont icon-user-fill', name: '联系我' }
-links:
-  items:
-    - {
-      title: 'drawio画图工具',
-      intro: 'drawio画图工具',
-      link: 'https://aiden-coding.github.io/learning/',
-      avatar: '/img/favicon.png'
-    }
-  default_avatar: /img/avatar.png
+
 index:
   slogan:
     enable: true
@@ -35,7 +27,44 @@ index:
   post_sticky:
     enable: true
     icon: 'iconfont icon-top'
-
+post:
+  meta:
+    author:  # 作者，优先根据 front-matter 里 author 字段，其次是 hexo 配置中 author 值
+      enable: false
+    date:  # 文章日期，优先根据 front-matter 里 date 字段，其次是 md 文件日期
+      enable: true
+      format: "dddd, MMMM Do YYYY, h:mm a"  # 格式参照 ISO-8601 日期格式化
+    wordcount:  # 字数统计
+      enable: true
+      format: "{} 字"  # 显示的文本，{}是数字的占位符（必须包含)，下同
+    min2read:  # 阅读时间
+      enable: true
+      format: "{} 分钟"
+    views:  # 阅读次数
+      enable: false
+      source: "leancloud"  # 统计数据来源，可选：leancloud | busuanzi   注意不蒜子会间歇抽风
+      format: "{} 次"
+code:
+  copy_btn: true
+  highlight:
+    enable: true
+    line_number: true
+    lib: "highlightjs"
+    highlightjs:
+      style: 'Github Gist'
+      bg_color: false
+    prismjs:
+      style: "default"
+      preprocess: true
+links:
+  items:
+    - {
+      title: 'drawio画图工具',
+      intro: 'drawio画图工具',
+      link: 'https://aiden-coding.github.io/learning/',
+      avatar: '/img/favicon.png'
+    }
+  default_avatar: /img/avatar.png
 web_analytics:  # 网页访问统计
   enable: true # 默认为false，启用网页统计改为true即可
   baidu:  # 百度统计的Key，参见 https://tongji.baidu.com/sc-web/10000033910/home/site/getjs?siteId=13751376 代码获取中 hm.js? 后边的字符串
@@ -49,6 +78,7 @@ web_analytics:  # 网页访问统计
     app_id:
     app_key:
     server_url:  # REST API 服务器地址，国际版不填
+
 footer:
   statistics:
     enable: false
