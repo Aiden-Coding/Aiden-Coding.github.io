@@ -61,7 +61,7 @@ links:
     - {
       title: 'drawio画图工具',
       intro: 'drawio画图工具',
-      link: 'https://aiden-coding.github.io/learning/',
+      link: 'https://aiden-coding.github.io/learn_drawio/',
       avatar: '/img/favicon.png'
     }
   default_avatar: /img/avatar.png
