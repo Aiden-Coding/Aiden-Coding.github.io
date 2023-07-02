@@ -105,4 +105,4 @@ deploy:
   type: git
   repo: git@github.com:Aiden-Coding/learn_drawio.git
   branch: page
-  message: 切换分支
+  message: 新加友情链接
