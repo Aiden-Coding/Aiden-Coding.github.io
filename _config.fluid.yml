@@ -64,6 +64,12 @@ links:
       link: 'https://aiden-coding.github.io/learn_drawio/',
       avatar: '/img/favicon.png'
     }
+    - {
+      title: '中文变量起名',
+      intro: '中文变量起名',
+      link: 'https://unbug.github.io/codelf/',
+      avatar: '/img/favicon.png'
+    }
   default_avatar: /img/avatar.png
 web_analytics:  # 网页访问统计
   enable: true # 默认为false，启用网页统计改为true即可
