@@ -1,8 +1,18 @@
 fun_features:
   typing: # 为 subtitle 添加打字机效果
     enable: false
+#    text: 这是一条 Slogan
 #    typeSpeed: 70 # 打印速度
 #    cursorChar: "_" # 游标字符
-    loop: false # 是否循环播放效果
+#    loop: false # 是否循环播放效果
 navbar:
   blog_title: Aiden
+index:
+  slogan:
+    enable: true
+    text: Aiden
+  # 开关自动摘要（默认开启）
+  auto_excerpt:
+    enable: true
+  # 文章跳转方式
+  post_url_target: _self

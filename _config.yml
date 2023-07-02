@@ -105,4 +105,4 @@ deploy:
   type: git
   repo: git@github.com:Aiden-Coding/Aiden-Coding.github.io.git
   branch: page
-  message: message
+  message: 切换分支
