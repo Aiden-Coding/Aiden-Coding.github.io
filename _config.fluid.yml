@@ -12,13 +12,17 @@ navbar:
     - { key: 'archives', link: '/archives/', icon: 'iconfont icon-archive-fill', name: '归档' }
     - { key: 'categories', link: '/categories/', icon: 'iconfont icon-category-fill', name: '分类' }
     - { key: 'tag', link: '/tags/', icon: 'iconfont icon-tags-fill' }
-    - { key: '工具',
-        icon: 'iconfont icon-category-fill',
-        submenu: [
-          { key: 'drawio画图工具', link: 'https://aiden-coding.github.io/learning/' },
-        ]
-      }
+    - { key: 'links', link: '/links/', icon: 'iconfont icon-link-fill' }
     - { key: 'about', link: '/about/', icon: 'iconfont icon-user-fill', name: '联系我' }
+links:
+  items:
+    - {
+      title: 'drawio画图工具',
+      intro: 'drawio画图工具',
+      link: 'https://aiden-coding.github.io/learning/',
+      avatar: '/img/favicon.png'
+    }
+  default_avatar: /img/avatar.png
 index:
   slogan:
     enable: true
