@@ -92,4 +92,15 @@ footer:
     pv_format: "总访问量 {} 次"  # 显示的文本，{}是数字的占位符（必须包含)，下同
     uv_format: "总访客数 {} 人"
 
+# 指定自定义 css 文件路径，路径是相对 source 目录
+custom_css:
+  - /css/bootstrap.min.css
+  - /css/font_1749284_hj8rtnfg7um.css
+  - /css/font_1736178_lbnruvf0jn.css
+  - /css/nprogress.min.css
+
+custom_js:
+  - /js/nprogress.min.js
+  - /js/jquery.min.js
+  - /js/bootstrap.min.js
 
