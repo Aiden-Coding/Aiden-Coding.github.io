@@ -97,10 +97,10 @@ custom_css:
   - /css/bootstrap.min.css
   - /css/font_1749284_hj8rtnfg7um.css
   - /css/font_1736178_lbnruvf0jn.css
-  - /css/nprogress.min.css
+#  - /css/nprogress.min.css
 
 custom_js:
-  - /js/nprogress.min.js
+#  - /js/nprogress.min.js
   - /js/jquery.min.js
   - /js/bootstrap.min.js
 
