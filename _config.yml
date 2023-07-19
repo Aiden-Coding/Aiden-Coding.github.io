@@ -99,6 +99,11 @@ ignore:
 ## Themes: https://hexo.io/themes/
 theme: fluid
 
+# hexo-admin authentification
+admin:
+  username: Aiden
+  password_hash: $2a$10$keCUoWd2jQKnzBTuZdbnWe8mfIMBQbL9hNxj0dAaaLFoGL9I9QesG
+  secret: 1102wenQ!
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
