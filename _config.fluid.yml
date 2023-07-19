@@ -93,14 +93,14 @@ footer:
     uv_format: "总访客数 {} 人"
 
 # 指定自定义 css 文件路径，路径是相对 source 目录
-custom_css:
-  - /css/bootstrap.min.css
-  - /css/font_1749284_hj8rtnfg7um.css
-  - /css/font_1736178_lbnruvf0jn.css
+#custom_css:
+#  - /css/bootstrap.min.css
+#  - /css/font_1749284_hj8rtnfg7um.css
+#  - /css/font_1736178_lbnruvf0jn.css
 #  - /css/nprogress.min.css
-
-custom_js:
+#
+#custom_js:
 #  - /js/nprogress.min.js
-  - /js/jquery.min.js
-  - /js/bootstrap.min.js
+#  - /js/jquery.min.js
+#  - /js/bootstrap.min.js
 
