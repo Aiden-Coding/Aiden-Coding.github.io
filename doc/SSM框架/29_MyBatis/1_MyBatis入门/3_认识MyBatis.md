@@ -14,4 +14,4 @@ Java对象)映射成数据库中的记录。
 
 
 ------------------------------------------------------------
-Generated with [Mybase Desktop 8.2.13](http://www.wjjsoft.com/mybase.html?ref=markdown_export)
+

@@ -28,4 +28,4 @@ DAO层，后面采用MyBatis访问数据库的mapper层，就是持久层。
 
 
 ------------------------------------------------------------
-Generated with [Mybase Desktop 8.2.13](http://www.wjjsoft.com/mybase.html?ref=markdown_export)
+
