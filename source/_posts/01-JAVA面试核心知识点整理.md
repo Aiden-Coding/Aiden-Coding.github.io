@@ -2,7 +2,7 @@
 layout: post
 title: 01-JAVA面试核心知识点整理
 date: 2023-08-07 22:56:33
-tags: 面试
+tags:
 ---
 # JVM 
 
@@ -6071,7 +6071,7 @@ LEFT-ROTATE(T, x)
 
 ![删除](../media/interview/1/删除.jpg)
 
-[红黑树之原理详解](.\子文档\红黑树之原理详解)
+[红黑树之原理详解](./红黑树之原理详解)
 
 [红黑树(五)之 Java的实现](.\子文档\红黑树(五)之 Java的实现)
 
@@ -6698,3 +6698,4 @@ AUFS 只是 Docker 使用的存储驱动的一种，除了 AUFS 之外，Docker 
  
 
 ## **Openstack** 
+
