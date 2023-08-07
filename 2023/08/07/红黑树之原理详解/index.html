@@ -1,0 +1,768 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Aiden">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="红黑树之原理详解R-B Tree简介R-B Tree，全称是Red-Black Tree，又称为“红黑树”，它一种特殊的二叉查找树。红黑树的每个节点上都有存储位表示节点的颜色，可以是红(Red)或黑(Black)。 红黑树的特性: （1）每个节点或者是黑色，或者是红色。 （2）根节点是黑色。 （3）每个叶子节点（NIL）是黑色。 [注意：这里叶子节点，是指为空(NIL或NULL)的叶子节点！] （">
+<meta property="og:type" content="article">
+<meta property="og:title" content="红黑树之原理详解">
+<meta property="og:url" content="http://aiden-coding.github.io/2023/08/07/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Aiden">
+<meta property="og:description" content="红黑树之原理详解R-B Tree简介R-B Tree，全称是Red-Black Tree，又称为“红黑树”，它一种特殊的二叉查找树。红黑树的每个节点上都有存储位表示节点的颜色，可以是红(Red)或黑(Black)。 红黑树的特性: （1）每个节点或者是黑色，或者是红色。 （2）根节点是黑色。 （3）每个叶子节点（NIL）是黑色。 [注意：这里叶子节点，是指为空(NIL或NULL)的叶子节点！] （">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://aiden-coding.github.io/media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E7%BA%A2%E9%BB%91%E6%A0%91.jpg">
+<meta property="og:image" content="http://aiden-coding.github.io/media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E5%B7%A6%E6%97%8B.jpg">
+<meta property="og:image" content="http://aiden-coding.github.io/media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E5%B7%A6%E6%97%8B2.jpg">
+<meta property="og:image" content="http://aiden-coding.github.io/media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E5%8F%B3%E6%97%8B.jpg">
+<meta property="og:image" content="http://aiden-coding.github.io/media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E5%8F%B3%E6%97%8B2.jpg">
+<meta property="og:image" content="http://aiden-coding.github.io/media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E5%B7%A6%E6%97%8B%E5%8F%B3%E6%97%8B%E5%8C%BA%E5%88%AB.jpg">
+<meta property="og:image" content="http://aiden-coding.github.io/media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E5%8F%94%E5%8F%94%E8%8A%82%E7%82%B9.png">
+<meta property="og:image" content="http://aiden-coding.github.io/media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E7%A4%BA%E6%84%8F%E5%9B%BE.jpg">
+<meta property="og:image" content="http://aiden-coding.github.io/media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E7%A4%BA%E6%84%8F%E5%9B%BE2.jpg">
+<meta property="og:image" content="http://aiden-coding.github.io/media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E7%A4%BA%E6%84%8F%E5%9B%BE3.jpg">
+<meta property="og:image" content="http://aiden-coding.github.io/media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E7%BA%A2%E9%BB%91%E6%A0%91%E5%88%A0%E9%99%A4.png">
+<meta property="og:image" content="http://aiden-coding.github.io/media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E7%A4%BA%E6%84%8F%E5%9B%BE4.jpg">
+<meta property="og:image" content="http://aiden-coding.github.io/media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E7%A4%BA%E6%84%8F%E5%9B%BE5.jpg">
+<meta property="og:image" content="http://aiden-coding.github.io/media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E7%A4%BA%E6%84%8F%E5%9B%BE6.jpg">
+<meta property="og:image" content="http://aiden-coding.github.io/media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E7%A4%BA%E6%84%8F%E5%9B%BE7.jpg">
+<meta property="article:published_time" content="2023-08-07T15:13:30.000Z">
+<meta property="article:modified_time" content="2023-08-07T15:17:18.631Z">
+<meta property="article:author" content="Aiden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://aiden-coding.github.io/media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E7%BA%A2%E9%BB%91%E6%A0%91.jpg">
+  
+  
+  
+  <title>红黑树之原理详解 - Aiden</title>
+
+  
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+
+  <link  rel="stylesheet" href="/css/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="/css/hint.min.css" />
+
+  <link  rel="stylesheet" href="/css/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"aiden-coding.github.io","root":"/","version":"1.9.5","typing":{"enable":false,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Aiden</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>联系我</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle">红黑树之原理详解</span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-08-07 23:13" pubdate>
+          星期一, 八月 7日 2023, 11:13 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          14k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          117 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">红黑树之原理详解</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="红黑树之原理详解"><a href="#红黑树之原理详解" class="headerlink" title="红黑树之原理详解"></a>红黑树之原理详解</h1><h3 id="R-B-Tree简介"><a href="#R-B-Tree简介" class="headerlink" title="R-B Tree简介"></a><strong>R-B Tree简介</strong></h3><p>R-B Tree，全称是Red-Black Tree，又称为“红黑树”，它一种特殊的二叉查找树。红黑树的每个节点上都有存储位表示节点的颜色，可以是红(Red)或黑(Black)。</p>
+<p><strong>红黑树的特性</strong>:<br> <strong>（1）每个节点或者是黑色，或者是红色。</strong><br> <strong>（2）根节点是黑色。</strong><br> <strong>（3）每个叶子节点（NIL）是黑色。 [注意：这里叶子节点，是指为空(NIL或NULL)的叶子节点！]</strong><br> <strong>（4）如果一个节点是红色的，则它的子节点必须是黑色的。</strong><br> <strong>（5）从一个节点到该节点的子孙节点的所有路径上包含相同数目的黑节点。</strong></p>
+<p><strong>注意</strong>：<br> (01) 特性(3)中的叶子节点，是只为空(NIL或null)的节点。<br> (02) 特性(5)，确保没有一条路径会比其他路径长出俩倍。因而，红黑树是相对是接近平衡的二叉树。</p>
+<p>红黑树示意图如下：</p>
+<p><img src="/../media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E7%BA%A2%E9%BB%91%E6%A0%91.jpg" srcset="/img/loading.gif" lazyload alt="红黑树"></p>
+<h3 id="红黑树的应用"><a href="#红黑树的应用" class="headerlink" title="红黑树的应用"></a><strong>红黑树的应用</strong></h3><p>红黑树的应用比较广泛，主要是用它来存储有序的数据，它的时间复杂度是O(lgn)，效率非常之高。<br> 例如，Java集合中的TreeSet和TreeMap，C++ STL中的set、map，以及Linux虚拟内存的管理，都是通过红黑树去实现的。</p>
+<h3 id="红黑树的时间复杂度和相关证明"><a href="#红黑树的时间复杂度和相关证明" class="headerlink" title="红黑树的时间复杂度和相关证明"></a><strong>红黑树的时间复杂度和相关证明</strong></h3><p><strong>红黑树的时间复杂度为: O(lgn)</strong><br> 下面通过“<em>数学归纳法</em>”对红黑树的时间复杂度进行证明。</p>
+<p>定理：<strong>一棵含有n个节点的红黑树的高度至多为2log(n+1)</strong>.</p>
+<p>证明：<br> “一棵含有n个节点的红黑树的高度至多为2log(n+1)” 的<strong>逆否命题</strong>是 “高度为h的红黑树，它的包含的内节点个数至少为 2h&#x2F;2-1个”。<br> 我们只需要证明逆否命题，即可证明原命题为真；即只需证明 “高度为h的红黑树，它的包含的内节点个数至少为 2h&#x2F;2-1个”。</p>
+<p>从某个节点x出发（不包括该节点）到达一个叶节点的任意一条路径上，黑色节点的个数称为该节点的黑高度(x’s black height)，记为<strong>bh(x)<strong>。关于bh(x)有两点需要说明：<br> 第1点：根据红黑树的”<strong>特性(5)</strong> ，即<em>从一个节点到该节点的子孙节点的所有路径上包含相同数目的黑节点</em>“可知，从节点x出发到达的所有的叶节点具有相同数目的黑节点。</strong>这也就意味着，bh(x)的值是唯一的</strong>！<br> 第2点：根据红黑色的”特性(4)，即<em>如果一个节点是红色的，则它的子节点必须是黑色的</em>“可知，从节点x出发达到叶节点”所经历的黑节点数目”&gt;&#x3D; “所经历的红节点的数目”。假设x是根节点，则可以得出结论”<strong>bh(x) &gt;&#x3D; h&#x2F;2</strong>“。进而，我们只需证明 “高度为h的红黑树，它的包含的黑节点个数至少为 2bh(x)-1个”即可。</p>
+<p>到这里，我们将需要证明的定理已经由<br> <strong>“一棵含有n个节点的红黑树的高度至多为2log(n+1)”</strong><br> 转变成只需要证明<br> <strong>“高度为h的红黑树，它的包含的内节点个数至少为 2bh(x)-1个”。</strong></p>
+<p>下面通过”数学归纳法”开始论证高度为h的红黑树，它的包含的内节点个数至少为 2bh(x)-1个”。</p>
+<p>(01) 当树的高度h&#x3D;0时，<br> 内节点个数是0，bh(x) 为0，2bh(x)-1 也为 0。显然，原命题成立。</p>
+<p>(02) 当h&gt;0，且树的高度为 h-1 时，它包含的节点个数至少为 2bh(x)-1-1。这个是根据(01)推断出来的！</p>
+<p>下面，由树的高度为 h-1 的已知条件推出“树的高度为 h 时，它所包含的节点树为 2bh(x)-1”。</p>
+<p>当树的高度为 h 时，<br> 对于节点x(x为根节点)，其黑高度为bh(x)。<br> 对于节点x的左右子树，它们黑高度为 bh(x) 或者 bh(x)-1。<br> 根据(02)的已知条件，我们已知 “x的左右子树，即高度为 h-1 的节点，它包含的节点至少为 2bh(x)-1-1 个”；</p>
+<p>所以，节点x所包含的节点至少为 ( 2bh(x)-1-1 ) + ( 2bh(x)-1-1 ) + 1 &#x3D; 2^bh(x)-1。即节点x所包含的节点至少为 2bh(x)-1。<br> 因此，原命题成立。</p>
+<p>由(01)、(02)得出，”高度为h的红黑树，它的包含的内节点个数至少为 2^bh(x)-1个”。<br> 因此，“一棵含有n个节点的红黑树的高度至多为2log(n+1)”。</p>
+<h3 id="红黑树的基本操作-一-左旋和右旋"><a href="#红黑树的基本操作-一-左旋和右旋" class="headerlink" title="红黑树的基本操作(一) 左旋和右旋"></a><strong>红黑树的基本操作(一) 左旋和右旋</strong></h3><p>红黑树的基本操作是<strong>添加</strong>、<strong>删除</strong>。在对红黑树进行添加或删除之后，都会用到旋转方法。为什么呢？道理很简单，添加或删除红黑树中的节点之后，红黑树就发生了变化，可能不满足红黑树的5条性质，也就不再是一颗红黑树了，而是一颗普通的树。而通过旋转，可以使这颗树重新成为红黑树。简单点说，旋转的目的是让树保持红黑树的特性。<br> 旋转包括两种：<strong>左旋</strong> 和 <strong>右旋</strong>。下面分别对它们进行介绍。</p>
+<p><strong>1. 左旋</strong></p>
+<p><img src="/../media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E5%B7%A6%E6%97%8B.jpg" srcset="/img/loading.gif" lazyload alt="左旋"></p>
+<p>对x进行左旋，意味着”将x变成一个左节点”。</p>
+<p>左旋的伪代码《算法导论》：参考上面的示意图和下面的伪代码，理解“红黑树T的节点x进行左旋”是如何进行的。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs swift"><span class="hljs-type">LEFT</span><span class="hljs-operator">-</span><span class="hljs-type">ROTATE</span>(<span class="hljs-type">T</span>, x)  <br> y <span class="hljs-operator">←</span> right[x]            <span class="hljs-comment">// 前提：这里假设x的右孩子为y。下面开始正式操作</span><br> right[x] <span class="hljs-operator">←</span> left[y]      <span class="hljs-comment">// 将 “y的左孩子” 设为 “x的右孩子”，即 将β设为x的右孩子</span><br> p[left[y]] <span class="hljs-operator">←</span> x          <span class="hljs-comment">// 将 “x” 设为 “y的左孩子的父亲”，即 将β的父亲设为x</span><br> p[y] <span class="hljs-operator">←</span> p[x]             <span class="hljs-comment">// 将 “x的父亲” 设为 “y的父亲”</span><br> <span class="hljs-keyword">if</span> p[x] <span class="hljs-operator">=</span> <span class="hljs-literal">nil</span>[<span class="hljs-type">T</span>]       <br> then root[<span class="hljs-type">T</span>] <span class="hljs-operator">←</span> y                 <span class="hljs-comment">// 情况1：如果 “x的父亲” 是空节点，则将y设为根节点</span><br> <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> x <span class="hljs-operator">=</span> left[p[x]]  <br>           then left[p[x]] <span class="hljs-operator">←</span> y    <span class="hljs-comment">// 情况2：如果 x是它父节点的左孩子，则将y设为“x的父节点的左孩子”</span><br>           <span class="hljs-keyword">else</span> right[p[x]] <span class="hljs-operator">←</span> y   <span class="hljs-comment">// 情况3：(x是它父节点的右孩子) 将y设为“x的父节点的右孩子”</span><br> left[y] <span class="hljs-operator">←</span> x             <span class="hljs-comment">// 将 “x” 设为 “y的左孩子”</span><br> p[x] <span class="hljs-operator">←</span> y                <span class="hljs-comment">// 将 “x的父节点” 设为 “y”</span><br></code></pre></td></tr></table></figure>
+
+<p>理解左旋之后，看看下面一个更鲜明的例子。你可以先不看右边的结果，自己尝试一下。</p>
+<p><img src="/../media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E5%B7%A6%E6%97%8B2.jpg" srcset="/img/loading.gif" lazyload alt="左旋2"></p>
+<p><strong>2. 右旋</strong></p>
+<p><img src="/../media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E5%8F%B3%E6%97%8B.jpg" srcset="/img/loading.gif" lazyload alt="右旋"></p>
+<p>对x进行左旋，意味着”将x变成一个左节点”。</p>
+<p>右旋的伪代码《算法导论》：参考上面的示意图和下面的伪代码，理解“红黑树T的节点y进行右旋”是如何进行的。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs swift"><span class="hljs-type">RIGHT</span><span class="hljs-operator">-</span><span class="hljs-type">ROTATE</span>(<span class="hljs-type">T</span>, y)  <br> x <span class="hljs-operator">←</span> left[y]             <span class="hljs-comment">// 前提：这里假设y的左孩子为x。下面开始正式操作</span><br> left[y] <span class="hljs-operator">←</span> right[x]      <span class="hljs-comment">// 将 “x的右孩子” 设为 “y的左孩子”，即 将β设为y的左孩子</span><br> p[right[x]] <span class="hljs-operator">←</span> y         <span class="hljs-comment">// 将 “y” 设为 “x的右孩子的父亲”，即 将β的父亲设为y</span><br> p[x] <span class="hljs-operator">←</span> p[y]             <span class="hljs-comment">// 将 “y的父亲” 设为 “x的父亲”</span><br> <span class="hljs-keyword">if</span> p[y] <span class="hljs-operator">=</span> <span class="hljs-literal">nil</span>[<span class="hljs-type">T</span>]       <br> then root[<span class="hljs-type">T</span>] <span class="hljs-operator">←</span> x                 <span class="hljs-comment">// 情况1：如果 “y的父亲” 是空节点，则将x设为根节点</span><br> <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> y <span class="hljs-operator">=</span> right[p[y]]  <br>           then right[p[y]] <span class="hljs-operator">←</span> x   <span class="hljs-comment">// 情况2：如果 y是它父节点的右孩子，则将x设为“y的父节点的左孩子”</span><br>           <span class="hljs-keyword">else</span> left[p[y]] <span class="hljs-operator">←</span> x    <span class="hljs-comment">// 情况3：(y是它父节点的左孩子) 将x设为“y的父节点的左孩子”</span><br> right[x] <span class="hljs-operator">←</span> y            <span class="hljs-comment">// 将 “y” 设为 “x的右孩子”</span><br> p[y] <span class="hljs-operator">←</span> x                <span class="hljs-comment">// 将 “y的父节点” 设为 “x”</span><br></code></pre></td></tr></table></figure>
+
+<p>理解右旋之后，看看下面一个更鲜明的例子。你可以先不看右边的结果，自己尝试一下。</p>
+<p><img src="/../media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E5%8F%B3%E6%97%8B2.jpg" srcset="/img/loading.gif" lazyload alt="右旋2"></p>
+<p><strong>旋转总结</strong>：</p>
+<p>(01) 左旋 和 右旋 是相对的两个概念，原理类似。理解一个也就理解了另一个。</p>
+<p>(02) 下面谈谈如何区分 左旋 和 右旋。<br> 在实际应用中，若没有彻底理解 左旋 和 右旋，可能会将它们混淆。下面谈谈我对如何区分 左旋 和 右旋 的理解。</p>
+<p><strong>3. 区分 左旋 和 右旋</strong></p>
+<p>仔细观察上面”左旋”和”右旋”的示意图。我们能清晰的发现，它们是对称的。无论是左旋还是右旋，被旋转的树，在旋转前是二叉查找树，并且旋转之后仍然是一颗二叉查找树。</p>
+<p><img src="/../media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E5%B7%A6%E6%97%8B%E5%8F%B3%E6%97%8B%E5%8C%BA%E5%88%AB.jpg" srcset="/img/loading.gif" lazyload alt="左旋右旋区别"></p>
+<p><strong>左旋示例图</strong>(以x为节点进行左旋)：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs rust">                              z<br>  x                          /                  <br> / \      --(左旋)-<span class="hljs-punctuation">-&gt;</span>       x<br>y   z                      /<br>                          y<br></code></pre></td></tr></table></figure>
+
+<p>对x进行左旋，意味着，将“x的右孩子”设为“x的父亲节点”；即，将 x变成了一个左节点(x成了为z的左孩子)！。 因此，<strong>左旋中的“左”，意味着“被旋转的节点将变成一个左节点”</strong>。</p>
+<p><strong>右旋示例图</strong>(以x为节点进行右旋)：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs rust">                             y<br>  x                           \                 <br> / \      --(右旋)-<span class="hljs-punctuation">-&gt;</span>           x<br>y   z                            \<br>                                  z<br></code></pre></td></tr></table></figure>
+
+<p>对x进行右旋，意味着，将“x的左孩子”设为“x的父亲节点”；即，将 x变成了一个右节点(x成了为y的右孩子)！ 因此，<strong>右旋中的“右”，意味着“被旋转的节点将变成一个右节点”</strong>。</p>
+<h3 id="红黑树的基本操作-二-添加"><a href="#红黑树的基本操作-二-添加" class="headerlink" title="红黑树的基本操作(二) 添加"></a><strong>红黑树的基本操作(二) 添加</strong></h3><p>将一个节点插入到红黑树中，需要执行哪些步骤呢？首先，将红黑树当作一颗二叉查找树，将节点插入；然后，将节点着色为红色；最后，通过旋转和重新着色等方法来修正该树，使之重新成为一颗红黑树。详细描述如下：</p>
+<p><strong>第一步: 将红黑树当作一颗二叉查找树，将节点插入。</strong><br> 红黑树本身就是一颗二叉查找树，将节点插入后，该树仍然是一颗二叉查找树。也就意味着，树的键值仍然是有序的。此外，无论是左旋还是右旋，若旋转之前这棵树是二叉查找树，旋转之后它一定还是二叉查找树。这也就意味着，任何的旋转和重新着色操作，都不会改变它仍然是一颗二叉查找树的事实。<br> 好吧？那接下来，我们就来想方设法的旋转以及重新着色，使这颗树重新成为红黑树！</p>
+<p><strong>第二步：将插入的节点着色为”红色”。</strong><br> 为什么着色成红色，而不是黑色呢？为什么呢？在回答之前，我们需要重新温习一下红黑树的特性：<br> (1) 每个节点或者是黑色，或者是红色。<br> (2) 根节点是黑色。<br> (3) 每个叶子节点是黑色。 [注意：这里叶子节点，是指为空的叶子节点！]<br> (4) 如果一个节点是红色的，则它的子节点必须是黑色的。<br> (5) 从一个节点到该节点的子孙节点的所有路径上包含相同数目的黑节点。<br> 将插入的节点着色为红色，不会违背”特性(5)”！少违背一条特性，就意味着我们需要处理的情况越少。接下来，就要努力的让这棵树满足其它性质即可；满足了的话，它就又是一颗红黑树了。o(∩∩)o…哈哈</p>
+<p><strong>第三步: 通过一系列的旋转或着色等操作，使之重新成为一颗红黑树。</strong><br> 第二步中，将插入节点着色为”红色”之后，不会违背”特性(5)”。那它到底会违背哪些特性呢？<br> 对于”特性(1)”，显然不会违背了。因为我们已经将它涂成红色了。<br> 对于”特性(2)”，显然也不会违背。在第一步中，我们是将红黑树当作二叉查找树，然后执行的插入操作。而根据二叉查找数的特点，插入操作不会改变根节点。所以，根节点仍然是黑色。<br> 对于”特性(3)”，显然不会违背了。这里的叶子节点是指的空叶子节点，插入非空节点并不会对它们造成影响。<br> 对于”特性(4)”，是有可能违背的！<br> 那接下来，想办法使之”满足特性(4)”，就可以将树重新构造成红黑树了。</p>
+<p>下面看看代码到底是怎样实现这三步的。</p>
+<p>添加操作的伪代码《算法导论》</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs swift"><span class="hljs-type">RB</span><span class="hljs-operator">-</span><span class="hljs-type">INSERT</span>(<span class="hljs-type">T</span>, z)  <br> y <span class="hljs-operator">←</span> <span class="hljs-literal">nil</span>[<span class="hljs-type">T</span>]                        <span class="hljs-comment">// 新建节点“y”，将y设为空节点。</span><br> x <span class="hljs-operator">←</span> root[<span class="hljs-type">T</span>]                       <span class="hljs-comment">// 设“红黑树T”的根节点为“x”</span><br> <span class="hljs-keyword">while</span> x <span class="hljs-operator">≠</span> <span class="hljs-literal">nil</span>[<span class="hljs-type">T</span>]                  <span class="hljs-comment">// 找出要插入的节点“z”在二叉树T中的位置“y”</span><br>     <span class="hljs-keyword">do</span> y <span class="hljs-operator">←</span> x                      <br>        <span class="hljs-keyword">if</span> key[z] <span class="hljs-operator">&lt;</span> key[x]  <br>           then x <span class="hljs-operator">←</span> left[x]  <br>           <span class="hljs-keyword">else</span> x <span class="hljs-operator">←</span> right[x]  <br> p[z] <span class="hljs-operator">←</span> y                          <span class="hljs-comment">// 设置 “z的父亲” 为 “y”</span><br> <span class="hljs-keyword">if</span> y <span class="hljs-operator">=</span> <span class="hljs-literal">nil</span>[<span class="hljs-type">T</span>]                     <br>    then root[<span class="hljs-type">T</span>] <span class="hljs-operator">←</span> z               <span class="hljs-comment">// 情况1：若y是空节点，则将z设为根</span><br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> key[z] <span class="hljs-operator">&lt;</span> key[y]        <br>            then left[y] <span class="hljs-operator">←</span> z       <span class="hljs-comment">// 情况2：若“z所包含的值” &lt; “y所包含的值”，则将z设为“y的左孩子”</span><br>            <span class="hljs-keyword">else</span> right[y] <span class="hljs-operator">←</span> z      <span class="hljs-comment">// 情况3：(“z所包含的值” &gt;= “y所包含的值”)将z设为“y的右孩子” </span><br> left[z] <span class="hljs-operator">←</span> <span class="hljs-literal">nil</span>[<span class="hljs-type">T</span>]                  <span class="hljs-comment">// z的左孩子设为空</span><br> right[z] <span class="hljs-operator">←</span> <span class="hljs-literal">nil</span>[<span class="hljs-type">T</span>]                 <span class="hljs-comment">// z的右孩子设为空。至此，已经完成将“节点z插入到二叉树”中了。</span><br> color[z] <span class="hljs-operator">←</span> <span class="hljs-type">RED</span>                    <span class="hljs-comment">// 将z着色为“红色”</span><br> <span class="hljs-type">RB</span><span class="hljs-operator">-</span><span class="hljs-type">INSERT</span><span class="hljs-operator">-</span><span class="hljs-type">FIXUP</span>(<span class="hljs-type">T</span>, z)             <span class="hljs-comment">// 通过RB-INSERT-FIXUP对红黑树的节点进行颜色修改以及旋转，让树T仍然是一颗红黑树</span><br></code></pre></td></tr></table></figure>
+
+<p>结合伪代码以及为代码上面的说明，先理解RB-INSERT。理解了RB-INSERT之后，我们接着对 RB-INSERT-FIXUP的伪代码进行说明。</p>
+<p>添加修正操作的伪代码《算法导论》</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs php">RB-INSERT-<span class="hljs-title function_ invoke__">FIXUP</span>(T, z)<br><span class="hljs-keyword">while</span> color[p[z]] = RED                                                  <span class="hljs-comment">// 若“当前节点(z)的父节点是红色”，则进行以下处理。</span><br>    <span class="hljs-keyword">do</span> <span class="hljs-keyword">if</span> p[z] = left[p[p[z]]]                                           <span class="hljs-comment">// 若“z的父节点”是“z的祖父节点的左孩子”，则进行以下处理。</span><br>          then y ← right[p[p[z]]]                                        <span class="hljs-comment">// 将y设置为“z的叔叔节点(z的祖父节点的右孩子)”</span><br>               <span class="hljs-keyword">if</span> color[y] = RED                                         <span class="hljs-comment">// Case 1条件：叔叔是红色</span><br>                  then color[p[z]] ← BLACK                    ▹ Case <span class="hljs-number">1</span>   <span class="hljs-comment">//  (01) 将“父节点”设为黑色。</span><br>                       color[y] ← BLACK                       ▹ Case <span class="hljs-number">1</span>   <span class="hljs-comment">//  (02) 将“叔叔节点”设为黑色。</span><br>                       color[p[p[z]]] ← RED                   ▹ Case <span class="hljs-number">1</span>   <span class="hljs-comment">//  (03) 将“祖父节点”设为“红色”。</span><br>                       z ← p[p[z]]                            ▹ Case <span class="hljs-number">1</span>   <span class="hljs-comment">//  (04) 将“祖父节点”设为“当前节点”(红色节点)</span><br>                  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> z = right[p[z]]                                <span class="hljs-comment">// Case 2条件：叔叔是黑色，且当前节点是右孩子</span><br>                          then z ← p[z]                       ▹ Case <span class="hljs-number">2</span>   <span class="hljs-comment">//  (01) 将“父节点”作为“新的当前节点”。</span><br>                               LEFT-<span class="hljs-title function_ invoke__">ROTATE</span>(T, z)              ▹ Case <span class="hljs-number">2</span>   <span class="hljs-comment">//  (02) 以“新的当前节点”为支点进行左旋。</span><br>                          color[p[z]] ← BLACK                 ▹ Case <span class="hljs-number">3</span>   <span class="hljs-comment">// Case 3条件：叔叔是黑色，且当前节点是左孩子。(01) 将“父节点”设为“黑色”。</span><br>                          color[p[p[z]]] ← RED                ▹ Case <span class="hljs-number">3</span>   <span class="hljs-comment">//  (02) 将“祖父节点”设为“红色”。</span><br>                          RIGHT-<span class="hljs-title function_ invoke__">ROTATE</span>(T, p[p[z]])            ▹ Case <span class="hljs-number">3</span>   <span class="hljs-comment">//  (03) 以“祖父节点”为支点进行右旋。</span><br>       <span class="hljs-keyword">else</span> (same <span class="hljs-keyword">as</span> then clause with <span class="hljs-string">&quot;right&quot;</span> <span class="hljs-keyword">and</span> <span class="hljs-string">&quot;left&quot;</span> exchanged)      <span class="hljs-comment">// 若“z的父节点”是“z的祖父节点的右孩子”，将上面的操作中“right”和“left”交换位置，然后依次执行。</span><br>color[root[T]] ← BLACK<br></code></pre></td></tr></table></figure>
+
+<p>根据被插入节点的父节点的情况，可以将”当节点z被着色为红色节点，并插入二叉树”划分为三种情况来处理。<br> ① 情况说明：被插入的节点是根节点。<br> 处理方法：直接把此节点涂为黑色。<br> ② 情况说明：被插入的节点的父节点是黑色。<br> 处理方法：什么也不需要做。节点被插入后，仍然是红黑树。<br> ③ 情况说明：被插入的节点的父节点是红色。<br> 处理方法：那么，该情况与红黑树的“特性(5)”相冲突。这种情况下，被插入节点是一定存在非空祖父节点的；进一步的讲，被插入节点也一定存在叔叔节点(即使叔叔节点为空，我们也视之为存在，空节点本身就是黑色节点)。理解这点之后，我们依据”叔叔节点的情况”，将这种情况进一步划分为3种情况(Case)。</p>
+<p><img src="/../media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E5%8F%94%E5%8F%94%E8%8A%82%E7%82%B9.png" srcset="/img/loading.gif" lazyload alt="叔叔节点"></p>
+<p>上面三种情况(Case)处理问题的核心思路都是：将红色的节点移到根节点；然后，将根节点设为黑色。下面对它们详细进行介绍。</p>
+<p><strong>1. (Case 1)叔叔是红色</strong></p>
+<p><strong>1.1 现象说明</strong><br> 当前节点(即，被插入节点)的父节点是红色，且当前节点的祖父节点的另一个子节点（叔叔节点）也是红色。</p>
+<p><strong>1.2 处理策略</strong><br> (01) 将“父节点”设为黑色。<br> (02) 将“叔叔节点”设为黑色。<br> (03) 将“祖父节点”设为“红色”。<br> (04) 将“祖父节点”设为“当前节点”(红色节点)；即，之后继续对“当前节点”进行操作。</p>
+<p><strong>下面谈谈为什么要这样处理。</strong>(建议理解的时候，通过下面的图进行对比)<br> “当前节点”和“父节点”都是红色，违背“特性(4)”。所以，将“父节点”设置“黑色”以解决这个问题。<br> 但是，将“父节点”由“红色”变成“黑色”之后，违背了“特性(5)”：因为，包含“父节点”的分支的黑色节点的总数增加了1。  解决这个问题的办法是：将“祖父节点”由“黑色”变成红色，同时，将“叔叔节点”由“红色”变成“黑色”。关于这里，说明几点：第一，为什么“祖父节点”之前是黑色？这个应该很容易想明白，因为在变换操作之前，该树是红黑树，“父节点”是红色，那么“祖父节点”一定是黑色。 第二，为什么将“祖父节点”由“黑色”变成红色，同时，将“叔叔节点”由“红色”变成“黑色”；能解决“包含‘父节点’的分支的黑色节点的总数增加了1”的问题。这个道理也很简单。“包含‘父节点’的分支的黑色节点的总数增加了1” 同时也意味着 “包含‘祖父节点’的分支的黑色节点的总数增加了1”，既然这样，我们通过将“祖父节点”由“黑色”变成“红色”以解决“包含‘祖父节点’的分支的黑色节点的总数增加了1”的问题； 但是，这样处理之后又会引起另一个问题“包含‘叔叔’节点的分支的黑色节点的总数减少了1”，现在我们已知“叔叔节点”是“红色”，将“叔叔节点”设为“黑色”就能解决这个问题。 所以，将“祖父节点”由“黑色”变成红色，同时，将“叔叔节点”由“红色”变成“黑色”；就解决了该问题。<br> 按照上面的步骤处理之后：当前节点、父节点、叔叔节点之间都不会违背红黑树特性，但祖父节点却不一定。若此时，祖父节点是根节点，直接将祖父节点设为“黑色”，那就完全解决这个问题了；若祖父节点不是根节点，那我们需要将“祖父节点”设为“新的当前节点”，接着对“新的当前节点”进行分析。</p>
+<p><strong>1.3 示意图</strong></p>
+<p><img src="/../media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E7%A4%BA%E6%84%8F%E5%9B%BE.jpg" srcset="/img/loading.gif" lazyload alt="示意图"></p>
+<p><strong>2. (Case 2)叔叔是黑色，且当前节点是右孩子</strong></p>
+<p><strong>2.1 现象说明</strong><br> 当前节点(即，被插入节点)的父节点是红色，叔叔节点是黑色，且当前节点是其父节点的右孩子</p>
+<p><strong>2.2 处理策略</strong><br> (01) 将“父节点”作为“新的当前节点”。<br> (02) 以“新的当前节点”为支点进行左旋。</p>
+<p><strong>下面谈谈为什么要这样处理。</strong>(建议理解的时候，通过下面的图进行对比)<br> 首先，将“父节点”作为“新的当前节点”；接着，以“新的当前节点”为支点进行左旋。 为了便于理解，我们先说明第(02)步，再说明第(01)步；为了便于说明，我们设置“父节点”的代号为F(Father)，“当前节点”的代号为S(Son)。<br> 为什么要“以F为支点进行左旋”呢？根据已知条件可知：S是F的右孩子。而之前我们说过，我们处理红黑树的核心思想：将红色的节点移到根节点；然后，将根节点设为黑色。既然是“将红色的节点移到根节点”，那就是说要不断的将破坏红黑树特性的红色节点上移(即向根方向移动)。 而S又是一个右孩子，因此，我们可以通过“左旋”来将S上移！<br> 按照上面的步骤(以F为支点进行左旋)处理之后：若S变成了根节点，那么直接将其设为“黑色”，就完全解决问题了；若S不是根节点，那我们需要执行步骤(01)，即“将F设为‘新的当前节点’”。那为什么不继续以S为新的当前节点继续处理，而需要以F为新的当前节点来进行处理呢？这是因为“左旋”之后，F变成了S的“子节点”，即S变成了F的父节点；而我们处理问题的时候，需要从下至上(由叶到根)方向进行处理；也就是说，必须先解决“孩子”的问题，再解决“父亲”的问题；所以，我们执行步骤(01)：将“父节点”作为“新的当前节点”。</p>
+<p><strong>2.2 示意图</strong></p>
+<p><img src="/../media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E7%A4%BA%E6%84%8F%E5%9B%BE2.jpg" srcset="/img/loading.gif" lazyload alt="示意图2"></p>
+<p><strong>3. (Case 3)叔叔是黑色，且当前节点是左孩子</strong></p>
+<p><strong>3.1 现象说明</strong><br> 当前节点(即，被插入节点)的父节点是红色，叔叔节点是黑色，且当前节点是其父节点的左孩子</p>
+<p><strong>3.2 处理策略</strong><br> (01) 将“父节点”设为“黑色”。<br> (02) 将“祖父节点”设为“红色”。<br> (03) 以“祖父节点”为支点进行右旋。</p>
+<p><strong>下面谈谈为什么要这样处理。</strong>(建议理解的时候，通过下面的图进行对比)<br> 为了便于说明，我们设置“当前节点”为S(Original Son)，“兄弟节点”为B(Brother)，“叔叔节点”为U(Uncle)，“父节点”为F(Father)，祖父节点为G(Grand-Father)。<br> S和F都是红色，违背了红黑树的“特性(4)”，我们可以将F由“红色”变为“黑色”，就解决了“违背‘特性(4)’”的问题；但却引起了其它问题：违背特性(5)，因为将F由红色改为黑色之后，所有经过F的分支的黑色节点的个数增加了1。那我们如何解决“所有经过F的分支的黑色节点的个数增加了1”的问题呢？ 我们可以通过“将G由黑色变成红色”，同时“以G为支点进行右旋”来解决。</p>
+<p><strong>2.3 示意图</strong></p>
+<p><img src="/../media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E7%A4%BA%E6%84%8F%E5%9B%BE3.jpg" srcset="/img/loading.gif" lazyload alt="示意图3"></p>
+<p>提示：上面的进行Case 3处理之后，再将节点”120”当作当前节点，就变成了Case 2的情况。</p>
+<h3 id="红黑树的基本操作-三-删除"><a href="#红黑树的基本操作-三-删除" class="headerlink" title="红黑树的基本操作(三) 删除"></a><strong>红黑树的基本操作(三) 删除</strong></h3><p>将红黑树内的某一个节点删除。需要执行的操作依次是：首先，将红黑树当作一颗二叉查找树，将该节点从二叉查找树中删除；然后，通过”旋转和重新着色”等一系列来修正该树，使之重新成为一棵红黑树。详细描述如下：</p>
+<p><strong>第一步：将红黑树当作一颗二叉查找树，将节点删除。</strong><br> 这和”删除常规二叉查找树中删除节点的方法是一样的”。分3种情况：<br> ① 被删除节点没有儿子，即为叶节点。那么，直接将该节点删除就OK了。<br> ② 被删除节点只有一个儿子。那么，直接删除该节点，并用该节点的唯一子节点顶替它的位置。<br> ③ 被删除节点有两个儿子。那么，先找出它的后继节点；然后把“它的后继节点的内容”复制给“该节点的内容”；之后，删除“它的后继节点”。在这里，后继节点相当于替身，在将后继节点的内容复制给”被删除节点”之后，再将后继节点删除。这样就巧妙的将问题转换为”删除后继节点”的情况了，下面就考虑后继节点。 在”被删除节点”有两个非空子节点的情况下，它的后继节点不可能是双子非空。既然”的后继节点”不可能双子都非空，就意味着”该节点的后继节点”要么没有儿子，要么只有一个儿子。若没有儿子，则按”情况① “进行处理；若只有一个儿子，则按”情况② “进行处理。</p>
+<p><strong>第二步：通过”旋转和重新着色”等一系列来修正该树，使之重新成为一棵红黑树。</strong><br> 因为”第一步”中删除节点之后，可能会违背红黑树的特性。所以需要通过”旋转和重新着色”来修正该树，使之重新成为一棵红黑树。</p>
+<p>删除操作的伪代码《算法导论》</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs swift"><span class="hljs-type">RB</span><span class="hljs-operator">-</span><span class="hljs-type">DELETE</span>(<span class="hljs-type">T</span>, z)<br><span class="hljs-keyword">if</span> left[z] <span class="hljs-operator">=</span> <span class="hljs-literal">nil</span>[<span class="hljs-type">T</span>] or right[z] <span class="hljs-operator">=</span> <span class="hljs-literal">nil</span>[<span class="hljs-type">T</span>]         <br>   then y <span class="hljs-operator">←</span> z                                  <span class="hljs-comment">// 若“z的左孩子” 或 “z的右孩子”为空，则将“z”赋值给 “y”；</span><br>   <span class="hljs-keyword">else</span> y <span class="hljs-operator">←</span> <span class="hljs-type">TREE</span><span class="hljs-operator">-</span><span class="hljs-type">SUCCESSOR</span>(z)                  <span class="hljs-comment">// 否则，将“z的后继节点”赋值给 “y”。</span><br><span class="hljs-keyword">if</span> left[y] <span class="hljs-operator">≠</span> <span class="hljs-literal">nil</span>[<span class="hljs-type">T</span>]<br>   then x <span class="hljs-operator">←</span> left[y]                            <span class="hljs-comment">// 若“y的左孩子” 不为空，则将“y的左孩子” 赋值给 “x”；</span><br>   <span class="hljs-keyword">else</span> x <span class="hljs-operator">←</span> right[y]                           <span class="hljs-comment">// 否则，“y的右孩子” 赋值给 “x”。</span><br>p[x] <span class="hljs-operator">←</span> p[y]                                    <span class="hljs-comment">// 将“y的父节点” 设置为 “x的父节点”</span><br><span class="hljs-keyword">if</span> p[y] <span class="hljs-operator">=</span> <span class="hljs-literal">nil</span>[<span class="hljs-type">T</span>]                               <br>   then root[<span class="hljs-type">T</span>] <span class="hljs-operator">←</span> x                            <span class="hljs-comment">// 情况1：若“y的父节点” 为空，则设置“x” 为 “根节点”。</span><br>   <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> y <span class="hljs-operator">=</span> left[p[y]]                    <br>           then left[p[y]] <span class="hljs-operator">←</span> x                 <span class="hljs-comment">// 情况2：若“y是它父节点的左孩子”，则设置“x” 为 “y的父节点的左孩子”</span><br>           <span class="hljs-keyword">else</span> right[p[y]] <span class="hljs-operator">←</span> x                <span class="hljs-comment">// 情况3：若“y是它父节点的右孩子”，则设置“x” 为 “y的父节点的右孩子”</span><br><span class="hljs-keyword">if</span> y <span class="hljs-operator">≠</span> z                                    <br>   then key[z] <span class="hljs-operator">←</span> key[y]                        <span class="hljs-comment">// 若“y的值” 赋值给 “z”。注意：这里只拷贝z的值给y，而没有拷贝z的颜色！！！</span><br>        copy y&#x27;s satellite data into z         <br><span class="hljs-keyword">if</span> color[y] <span class="hljs-operator">=</span> <span class="hljs-type">BLACK</span>                            <br>   then <span class="hljs-type">RB</span><span class="hljs-operator">-</span><span class="hljs-type">DELETE</span><span class="hljs-operator">-</span><span class="hljs-type">FIXUP</span>(<span class="hljs-type">T</span>, x)                  <span class="hljs-comment">// 若“y为黑节点”，则调用</span><br><span class="hljs-keyword">return</span> y<br></code></pre></td></tr></table></figure>
+
+<p>结合伪代码以及为代码上面的说明，先理解RB-DELETE。理解了RB-DELETE之后，接着对 RB-DELETE-FIXUP的伪代码进行说明</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs php">RB-DELETE-<span class="hljs-title function_ invoke__">FIXUP</span>(T, x)<br><span class="hljs-keyword">while</span> x ≠ root[T] <span class="hljs-keyword">and</span> color[x] = BLACK  <br>    <span class="hljs-keyword">do</span> <span class="hljs-keyword">if</span> x = left[p[x]]      <br>          then w ← right[p[x]]                                             <span class="hljs-comment">// 若 “x”是“它父节点的左孩子”，则设置 “w”为“x的叔叔”(即x为它父节点的右孩子)                                          </span><br>               <span class="hljs-keyword">if</span> color[w] = RED                                           <span class="hljs-comment">// Case 1: x是“黑+黑”节点，x的兄弟节点是红色。(此时x的父节点和x的兄弟节点的子节点都是黑节点)。</span><br>                  then color[w] ← BLACK                        ▹  Case <span class="hljs-number">1</span>   <span class="hljs-comment">//   (01) 将x的兄弟节点设为“黑色”。</span><br>                       color[p[x]] ← RED                       ▹  Case <span class="hljs-number">1</span>   <span class="hljs-comment">//   (02) 将x的父节点设为“红色”。</span><br>                       LEFT-<span class="hljs-title function_ invoke__">ROTATE</span>(T, p[x])                    ▹  Case <span class="hljs-number">1</span>   <span class="hljs-comment">//   (03) 对x的父节点进行左旋。</span><br>                       w ← right[p[x]]                         ▹  Case <span class="hljs-number">1</span>   <span class="hljs-comment">//   (04) 左旋后，重新设置x的兄弟节点。</span><br>               <span class="hljs-keyword">if</span> color[left[w]] = BLACK <span class="hljs-keyword">and</span> color[right[w]] = BLACK       <span class="hljs-comment">// Case 2: x是“黑+黑”节点，x的兄弟节点是黑色，x的兄弟节点的两个孩子都是黑色。</span><br>                  then color[w] ← RED                          ▹  Case <span class="hljs-number">2</span>   <span class="hljs-comment">//   (01) 将x的兄弟节点设为“红色”。</span><br>                       x ←  p[x]                               ▹  Case <span class="hljs-number">2</span>   <span class="hljs-comment">//   (02) 设置“x的父节点”为“新的x节点”。</span><br>                  <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> color[right[w]] = BLACK                          <span class="hljs-comment">// Case 3: x是“黑+黑”节点，x的兄弟节点是黑色；x的兄弟节点的左孩子是红色，右孩子是黑色的。</span><br>                          then color[left[w]] ← BLACK          ▹  Case <span class="hljs-number">3</span>   <span class="hljs-comment">//   (01) 将x兄弟节点的左孩子设为“黑色”。</span><br>                               color[w] ← RED                  ▹  Case <span class="hljs-number">3</span>   <span class="hljs-comment">//   (02) 将x兄弟节点设为“红色”。</span><br>                               RIGHT-<span class="hljs-title function_ invoke__">ROTATE</span>(T, w)              ▹  Case <span class="hljs-number">3</span>   <span class="hljs-comment">//   (03) 对x的兄弟节点进行右旋。</span><br>                               w ← right[p[x]]                 ▹  Case <span class="hljs-number">3</span>   <span class="hljs-comment">//   (04) 右旋后，重新设置x的兄弟节点。</span><br>                        color[w] ← color[p[x]]                 ▹  Case <span class="hljs-number">4</span>   <span class="hljs-comment">// Case 4: x是“黑+黑”节点，x的兄弟节点是黑色；x的兄弟节点的右孩子是红色的。(01) 将x父节点颜色 赋值给 x的兄弟节点。</span><br>                        color[p[x]] ← BLACK                    ▹  Case <span class="hljs-number">4</span>   <span class="hljs-comment">//   (02) 将x父节点设为“黑色”。</span><br>                        color[right[w]] ← BLACK                ▹  Case <span class="hljs-number">4</span>   <span class="hljs-comment">//   (03) 将x兄弟节点的右子节设为“黑色”。</span><br>                        LEFT-<span class="hljs-title function_ invoke__">ROTATE</span>(T, p[x])                   ▹  Case <span class="hljs-number">4</span>   <span class="hljs-comment">//   (04) 对x的父节点进行左旋。</span><br>                        x ← root[T]                            ▹  Case <span class="hljs-number">4</span>   <span class="hljs-comment">//   (05) 设置“x”为“根节点”。</span><br>       <span class="hljs-keyword">else</span> (same <span class="hljs-keyword">as</span> then clause with <span class="hljs-string">&quot;right&quot;</span> <span class="hljs-keyword">and</span> <span class="hljs-string">&quot;left&quot;</span> exchanged)        <span class="hljs-comment">// 若 “x”是“它父节点的右孩子”，将上面的操作中“right”和“left”交换位置，然后依次执行。</span><br>color[x] ← BLACK<br></code></pre></td></tr></table></figure>
+
+<p>下面对删除函数进行分析。在分析之前，我们再次温习一下红黑树的几个特性：<br> (1) 每个节点或者是黑色，或者是红色。<br> (2) 根节点是黑色。<br> (3) 每个叶子节点是黑色。 [注意：这里叶子节点，是指为空的叶子节点！]<br> (4) 如果一个节点是红色的，则它的子节点必须是黑色的。<br> (5) 从一个节点到该节点的子孙节点的所有路径上包含相同数目的黑节点。</p>
+<p>前面我们将”删除红黑树中的节点”大致分为两步，在第一步中”将红黑树当作一颗二叉查找树，将节点删除”后，可能违反”特性(2)、(4)、(5)”三个特性。第二步需要解决上面的三个问题，进而保持红黑树的全部特性。<br> 为了便于分析，我们假设”x包含一个额外的黑色”(x原本的颜色还存在)，这样就不会违反”特性(5)”。为什么呢？<br> 通过RB-DELETE算法，我们知道：删除节点y之后，x占据了原来节点y的位置。 既然删除y(y是黑色)，意味着减少一个黑色节点；那么，再在该位置上增加一个黑色即可。这样，当我们假设”x包含一个额外的黑色”，就正好弥补了”删除y所丢失的黑色节点”，也就不会违反”特性(5)”。 因此，假设”x包含一个额外的黑色”(x原本的颜色还存在)，这样就不会违反”特性(5)”。<br> 现在，x不仅包含它原本的颜色属性，x还包含一个额外的黑色。即x的颜色属性是”红+黑”或”黑+黑”，它违反了”特性(1)”。</p>
+<p>现在，我们面临的问题，由解决”违反了特性(2)、(4)、(5)三个特性”转换成了”解决违反特性(1)、(2)、(4)三个特性”。RB-DELETE-FIXUP需要做的就是通过算法恢复红黑树的特性(1)、(2)、(4)。RB-DELETE-FIXUP的思想是：将x所包含的额外的黑色不断沿树上移(向根方向移动)，直到出现下面的姿态：<br> a) x指向一个”红+黑”节点。此时，将x设为一个”黑”节点即可。<br> b) x指向根。此时，将x设为一个”黑”节点即可。<br> c) 非前面两种姿态。</p>
+<p>将上面的姿态，可以概括为3种情况。<br> ① 情况说明：x是“红+黑”节点。<br> 处理方法：直接把x设为黑色，结束。此时红黑树性质全部恢复。<br> ② 情况说明：x是“黑+黑”节点，且x是根。<br> 处理方法：什么都不做，结束。此时红黑树性质全部恢复。<br> ③ 情况说明：x是“黑+黑”节点，且x不是根。<br> 处理方法：这种情况又可以划分为4种子情况。这4种子情况如下表所示：</p>
+<p><img src="/../media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E7%BA%A2%E9%BB%91%E6%A0%91%E5%88%A0%E9%99%A4.png" srcset="/img/loading.gif" lazyload alt="红黑树删除"></p>
+<p><strong>1. (Case 1)x是”黑+黑”节点，x的兄弟节点是红色</strong></p>
+<p><strong>1.1 现象说明</strong><br> x是”黑+黑”节点，x的兄弟节点是红色。(此时x的父节点和x的兄弟节点的子节点都是黑节点)。</p>
+<p><strong>1.2 处理策略</strong><br> (01) 将x的兄弟节点设为“黑色”。<br> (02) 将x的父节点设为“红色”。<br> (03) 对x的父节点进行左旋。<br> (04) 左旋后，重新设置x的兄弟节点。</p>
+<p><strong>下面谈谈为什么要这样处理。</strong>(建议理解的时候，通过下面的图进行对比)<br> 这样做的目的是将“Case 1”转换为“Case 2”、“Case 3”或“Case 4”，从而进行进一步的处理。对x的父节点进行左旋；左旋后，为了保持红黑树特性，就需要在左旋前“将x的兄弟节点设为黑色”，同时“将x的父节点设为红色”；左旋后，由于x的兄弟节点发生了变化，需要更新x的兄弟节点，从而进行后续处理。</p>
+<p><strong>1.3 示意图</strong></p>
+<p><img src="/../media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E7%A4%BA%E6%84%8F%E5%9B%BE4.jpg" srcset="/img/loading.gif" lazyload alt="示意图4"></p>
+<p><strong>2. (Case 2) x是”黑+黑”节点，x的兄弟节点是黑色，x的兄弟节点的两个孩子都是黑色</strong></p>
+<p><strong>2.1 现象说明</strong><br> x是“黑+黑”节点，x的兄弟节点是黑色，x的兄弟节点的两个孩子都是黑色。</p>
+<p><strong>2.2 处理策略</strong><br> (01) 将x的兄弟节点设为“红色”。<br> (02) 设置“x的父节点”为“新的x节点”。</p>
+<p><strong>下面谈谈为什么要这样处理。</strong>(建议理解的时候，通过下面的图进行对比)<br> 这个情况的处理思想：是将“x中多余的一个黑色属性上移(往根方向移动)”。 x是“黑+黑”节点，我们将x由“黑+黑”节点 变成 “黑”节点，多余的一个“黑”属性移到x的父节点中，即x的父节点多出了一个黑属性(若x的父节点原先是“黑”，则此时变成了“黑+黑”；若x的父节点原先时“红”，则此时变成了“红+黑”)。 此时，需要注意的是：所有经过x的分支中黑节点个数没变化；但是，所有经过x的兄弟节点的分支中黑色节点的个数增加了1(因为x的父节点多了一个黑色属性)！为了解决这个问题，我们需要将“所有经过x的兄弟节点的分支中黑色节点的个数减1”即可，那么就可以通过“将x的兄弟节点由黑色变成红色”来实现。<br> 经过上面的步骤(将x的兄弟节点设为红色)，多余的一个颜色属性(黑色)已经跑到x的父节点中。我们需要将x的父节点设为“新的x节点”进行处理。若“新的x节点”是“黑+红”，直接将“新的x节点”设为黑色，即可完全解决该问题；若“新的x节点”是“黑+黑”，则需要对“新的x节点”进行进一步处理。</p>
+<p><strong>2.3 示意图</strong></p>
+<p><img src="/../media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E7%A4%BA%E6%84%8F%E5%9B%BE5.jpg" srcset="/img/loading.gif" lazyload alt="示意图5"></p>
+<p><strong>3. (Case 3)x是“黑+黑”节点，x的兄弟节点是黑色；x的兄弟节点的左孩子是红色，右孩子是黑色的</strong></p>
+<p><strong>3.1 现象说明</strong><br> x是“黑+黑”节点，x的兄弟节点是黑色；x的兄弟节点的左孩子是红色，右孩子是黑色的。</p>
+<p><strong>3.2 处理策略</strong><br> (01) 将x兄弟节点的左孩子设为“黑色”。<br> (02) 将x兄弟节点设为“红色”。<br> (03) 对x的兄弟节点进行右旋。<br> (04) 右旋后，重新设置x的兄弟节点。</p>
+<p><strong>下面谈谈为什么要这样处理。</strong>(建议理解的时候，通过下面的图进行对比)<br> 我们处理“Case 3”的目的是为了将“Case 3”进行转换，转换成“Case 4”,从而进行进一步的处理。转换的方式是对x的兄弟节点进行右旋；为了保证右旋后，它仍然是红黑树，就需要在右旋前“将x的兄弟节点的左孩子设为黑色”，同时“将x的兄弟节点设为红色”；右旋后，由于x的兄弟节点发生了变化，需要更新x的兄弟节点，从而进行后续处理。</p>
+<p><strong>3.3 示意图</strong></p>
+<p><img src="/../media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E7%A4%BA%E6%84%8F%E5%9B%BE6.jpg" srcset="/img/loading.gif" lazyload alt="示意图6"></p>
+<p><strong>4. (Case 4)x是“黑+黑”节点，x的兄弟节点是黑色；x的兄弟节点的右孩子是红色的，x的兄弟节点的左孩子任意颜色</strong></p>
+<p><strong>4.1 现象说明</strong><br> x是“黑+黑”节点，x的兄弟节点是黑色；x的兄弟节点的右孩子是红色的，x的兄弟节点的左孩子任意颜色。</p>
+<p><strong>4.2 处理策略</strong><br> (01) 将x父节点颜色 赋值给 x的兄弟节点。<br> (02) 将x父节点设为“黑色”。<br> (03) 将x兄弟节点的右子节设为“黑色”。<br> (04) 对x的父节点进行左旋。<br> (05) 设置“x”为“根节点”。</p>
+<p><strong>下面谈谈为什么要这样处理。</strong>(建议理解的时候，通过下面的图进行对比)<br> 我们处理“Case 4”的目的是：去掉x中额外的黑色，将x变成单独的黑色。处理的方式是“：进行颜色修改，然后对x的父节点进行左旋。下面，我们来分析是如何实现的。<br> 为了便于说明，我们设置“当前节点”为S(Original Son)，“兄弟节点”为B(Brother)，“兄弟节点的左孩子”为BLS(Brother’s Left Son)，“兄弟节点的右孩子”为BRS(Brother’s Right Son)，“父节点”为F(Father)。<br> 我们要对F进行左旋。但在左旋前，我们需要调换F和B的颜色，并设置BRS为黑色。为什么需要这里处理呢？因为左旋后，F和BLS是父子关系，而我们已知BL是红色，如果F是红色，则违背了“特性(4)”；为了解决这一问题，我们将“F设置为黑色”。 但是，F设置为黑色之后，为了保证满足“特性(5)”，即为了保证左旋之后：<br> 第一，“同时经过根节点和S的分支的黑色节点个数不变”。<br> 若满足“第一”，只需要S丢弃它多余的颜色即可。因为S的颜色是“黑+黑”，而左旋后“同时经过根节点和S的分支的黑色节点个数”增加了1；现在，只需将S由“黑+黑”变成单独的“黑”节点，即可满足“第一”。<br> 第二，“同时经过根节点和BLS的分支的黑色节点数不变”。<br> 若满足“第二”，只需要将“F的原始颜色”赋值给B即可。之前，我们已经将“F设置为黑色”(即，将B的颜色”黑色”，赋值给了F)。至此，我们算是调换了F和B的颜色。<br> 第三，“同时经过根节点和BRS的分支的黑色节点数不变”。<br> 在“第二”已经满足的情况下，若要满足“第三”，只需要将BRS设置为“黑色”即可。<br> 经过，上面的处理之后。红黑树的特性全部得到的满足！接着，我们将x设为根节点，就可以跳出while循环(参考伪代码)；即完成了全部处理。</p>
+<p>至此，我们就完成了Case 4的处理。理解Case 4的核心，是了解如何“去掉当前节点额外的黑色”。</p>
+<p><strong>4.3 示意图</strong></p>
+<p><img src="/../media/interview/1/%E7%BA%A2%E9%BB%91%E6%A0%91%E4%B9%8B%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/%E7%A4%BA%E6%84%8F%E5%9B%BE7.jpg" srcset="/img/loading.gif" lazyload alt="示意图7"></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>红黑树之原理详解</div>
+      <div>http://aiden-coding.github.io/2023/08/07/红黑树之原理详解/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Aiden</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年8月7日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/08/07/01-JAVA%E9%9D%A2%E8%AF%95%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86%E7%82%B9%E6%95%B4%E7%90%86/" title="01-JAVA面试核心知识点整理">
+                        <span class="hidden-mobile">01-JAVA面试核心知识点整理</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  
+<script src="/js/nprogress.min.js"></script>
+
+
+<link rel="stylesheet" href="/css/nprogress.min.css">
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+
+<script src="/js/jquery.min.js"></script>
+
+
+<script src="/js/bootstrap.min.js"></script>
+
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('/js/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src='/js/clipboard.min.js'></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('/js/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('/js/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
