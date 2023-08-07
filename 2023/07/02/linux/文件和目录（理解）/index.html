@@ -1,0 +1,751 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Aiden">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="文件和目录（理解）目标 理解 Linux 文件目录的结构  01. 单用户操作系统和多用户操作系统（科普） 单用户操作系统：指一台计算机在同一时间 只能由一个用户 使用，一个用户独自享用系统的全部硬件和软件资源  Windows XP 之前的版本都是单用户操作系统   多用户操作系统：指一台计算机在同一时间可以由 多个用户 使用，多个用户共同享用系统的全部硬件和软件资源  Unix 和 Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文件和目录（理解）">
+<meta property="og:url" content="http://aiden-coding.github.io/2023/07/02/linux/%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95%EF%BC%88%E7%90%86%E8%A7%A3%EF%BC%89/index.html">
+<meta property="og:site_name" content="Aiden">
+<meta property="og:description" content="文件和目录（理解）目标 理解 Linux 文件目录的结构  01. 单用户操作系统和多用户操作系统（科普） 单用户操作系统：指一台计算机在同一时间 只能由一个用户 使用，一个用户独自享用系统的全部硬件和软件资源  Windows XP 之前的版本都是单用户操作系统   多用户操作系统：指一台计算机在同一时间可以由 多个用户 使用，多个用户共同享用系统的全部硬件和软件资源  Unix 和 Linux">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://aiden-coding.github.io/media/14927564336623/001_Windows%E4%B8%8B%E7%9A%84%E5%A4%9A%E4%B8%AA%E7%9B%98.png">
+<meta property="og:image" content="http://aiden-coding.github.io/media/14927564336623/001-Windows%E4%B8%8B%E5%A4%9A%E4%B8%AA%E7%9B%98%E4%B8%BA%E8%8A%82%E7%82%B9%E7%9A%84%E7%9B%AE%E5%BD%95%E5%88%86%E6%94%AF.png">
+<meta property="og:image" content="http://aiden-coding.github.io/media/14927564336623/002_Ubuntu%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95.png">
+<meta property="og:image" content="http://aiden-coding.github.io/media/14927564336623/003-Linux%E7%9A%84%E6%A0%91%E5%BD%A2%E7%A4%BA%E6%84%8F%E5%9B%BE.png">
+<meta property="article:published_time" content="2023-07-02T09:45:23.000Z">
+<meta property="article:modified_time" content="2023-07-19T16:19:41.164Z">
+<meta property="article:author" content="Aiden">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://aiden-coding.github.io/media/14927564336623/001_Windows%E4%B8%8B%E7%9A%84%E5%A4%9A%E4%B8%AA%E7%9B%98.png">
+  
+  
+  
+  <title>文件和目录（理解） - Aiden</title>
+
+  
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+
+  <link  rel="stylesheet" href="/css/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="/css/hint.min.css" />
+
+  <link  rel="stylesheet" href="/css/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"aiden-coding.github.io","root":"/","version":"1.9.5","typing":{"enable":false,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Aiden</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>联系我</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle">文件和目录（理解）</span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-07-02 17:45" pubdate>
+          星期日, 七月 2日 2023, 5:45 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          2.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          18 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">文件和目录（理解）</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="文件和目录（理解）"><a href="#文件和目录（理解）" class="headerlink" title="文件和目录（理解）"></a>文件和目录（理解）</h1><h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><ul>
+<li>理解 Linux 文件目录的结构</li>
+</ul>
+<h2 id="01-单用户操作系统和多用户操作系统（科普）"><a href="#01-单用户操作系统和多用户操作系统（科普）" class="headerlink" title="01. 单用户操作系统和多用户操作系统（科普）"></a>01. 单用户操作系统和多用户操作系统（科普）</h2><ul>
+<li><p><strong>单用户操作系统</strong>：指一台计算机在同一时间 <strong>只能由一个用户</strong> 使用，一个用户独自享用系统的全部硬件和软件资源</p>
+<ul>
+<li><strong>Windows XP</strong> 之前的版本都是单用户操作系统</li>
+</ul>
+</li>
+<li><p><strong>多用户操作系统</strong>：指一台计算机在同一时间可以由 <strong>多个用户</strong> 使用，多个用户共同享用系统的全部硬件和软件资源</p>
+<ul>
+<li><strong>Unix</strong> 和 <strong>Linux</strong> 的设计初衷就是多用户操作系统</li>
+</ul>
+</li>
+</ul>
+<h2 id="02-Windows-和-Linux-文件系统区别"><a href="#02-Windows-和-Linux-文件系统区别" class="headerlink" title="02. Windows 和 Linux 文件系统区别"></a>02. <code>Windows</code> 和 <code>Linux</code> 文件系统区别</h2><h3 id="2-1-Windows-下的文件系统"><a href="#2-1-Windows-下的文件系统" class="headerlink" title="2.1 Windows 下的文件系统"></a>2.1 <code>Windows</code> 下的文件系统</h3><ul>
+<li>在 <code>Windows</code> 下，打开 “计算机”，我们看到的是一个个的驱动器盘符：</li>
+</ul>
+<p><img src="/../../media/14927564336623/001_Windows%E4%B8%8B%E7%9A%84%E5%A4%9A%E4%B8%AA%E7%9B%98.png" srcset="/img/loading.gif" lazyload alt="001_Windows下的多个盘"></p>
+<ul>
+<li>每个驱动器都有自己的根目录结构，这样形成了多个树并列的情形，如图所示：</li>
+</ul>
+<p><img src="/../../media/14927564336623/001-Windows%E4%B8%8B%E5%A4%9A%E4%B8%AA%E7%9B%98%E4%B8%BA%E8%8A%82%E7%82%B9%E7%9A%84%E7%9B%AE%E5%BD%95%E5%88%86%E6%94%AF.png" srcset="/img/loading.gif" lazyload alt="001-Windows下多个盘为节点的目录分支"></p>
+<h3 id="2-2-Linux-下的文件系统"><a href="#2-2-Linux-下的文件系统" class="headerlink" title="2.2 Linux 下的文件系统"></a>2.2 <code>Linux</code> 下的文件系统</h3><ul>
+<li>在 <code>Linux</code> 下，我们是看不到这些驱动器盘符，我们看到的是文件夹（目录）：</li>
+</ul>
+<p><img src="/../../media/14927564336623/002_Ubuntu%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95.png" srcset="/img/loading.gif" lazyload alt="002_Ubuntu文件目录"></p>
+<ul>
+<li><code>Ubuntu</code> 没有盘符这个概念，只有一个根目录 <code>/</code>，所有文件都在它下面</li>
+</ul>
+<p><img src="/../../media/14927564336623/003-Linux%E7%9A%84%E6%A0%91%E5%BD%A2%E7%A4%BA%E6%84%8F%E5%9B%BE.png" srcset="/img/loading.gif" lazyload alt="003-Linux的树形示意图"></p>
+<h3 id="2-3-用户目录"><a href="#2-3-用户目录" class="headerlink" title="2.3 用户目录"></a>2.3 用户目录</h3><p>位于 <code>/home/user</code>，称之为用户工作目录或家目录，表示方式：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">/home/user<br>~<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-4-Linux-主要目录速查表"><a href="#2-4-Linux-主要目录速查表" class="headerlink" title="2.4 Linux 主要目录速查表"></a>2.4 <code>Linux</code> 主要目录速查表</h3><ul>
+<li>&#x2F;：根目录，<strong>一般根目录下只存放目录</strong>，在 linux 下有且只有一个根目录，所有的东西都是从这里开始<ul>
+<li>当在终端里输入 <code>/home</code>，其实是在告诉电脑，先从 <code>/</code>（根目录）开始，再进入到 <code>home</code> 目录</li>
+</ul>
+</li>
+<li>&#x2F;bin、&#x2F;usr&#x2F;bin：可执行二进制文件的目录，如常用的命令 ls、tar、mv、cat 等</li>
+<li>&#x2F;boot：放置 linux 系统启动时用到的一些文件，如 linux 的内核文件：<code>/boot/vmlinuz</code>，系统引导管理器：<code>/boot/grub</code></li>
+<li>&#x2F;dev：存放linux系统下的设备文件，访问该目录下某个文件，相当于访问某个设备，常用的是挂载光驱<code>mount /dev/cdrom /mnt</code></li>
+<li>&#x2F;etc：系统配置文件存放的目录，不建议在此目录下存放可执行文件，重要的配置文件有 <ul>
+<li>&#x2F;etc&#x2F;inittab</li>
+<li>&#x2F;etc&#x2F;fstab</li>
+<li>&#x2F;etc&#x2F;init.d</li>
+<li>&#x2F;etc&#x2F;X11</li>
+<li>&#x2F;etc&#x2F;sysconfig</li>
+<li>&#x2F;etc&#x2F;xinetd.d</li>
+</ul>
+</li>
+<li>&#x2F;home：系统默认的用户家目录，新增用户账号时，用户的家目录都存放在此目录下<ul>
+<li><code>~</code> 表示当前用户的家目录</li>
+<li><code>~edu</code> 表示用户 <code>edu</code> 的家目录</li>
+</ul>
+</li>
+<li>&#x2F;lib、&#x2F;usr&#x2F;lib、&#x2F;usr&#x2F;local&#x2F;lib：系统使用的函数库的目录，程序在执行过程中，需要调用一些额外的参数时需要函数库的协助</li>
+<li>&#x2F;lost+fount：系统异常产生错误时，会将一些遗失的片段放置于此目录下</li>
+<li>&#x2F;mnt: &#x2F;media：光盘默认挂载点，通常光盘挂载于 &#x2F;mnt&#x2F;cdrom 下，也不一定，可以选择任意位置进行挂载</li>
+<li>&#x2F;opt：给主机额外安装软件所摆放的目录</li>
+<li>&#x2F;proc：此目录的数据都在内存中，如系统核心，外部设备，网络状态，由于数据都存放于内存中，所以不占用磁盘空间，比较重要的文件有：&#x2F;proc&#x2F;cpuinfo、&#x2F;proc&#x2F;interrupts、&#x2F;proc&#x2F;dma、&#x2F;proc&#x2F;ioports、&#x2F;proc&#x2F;net&#x2F;* 等</li>
+<li>&#x2F;root：系统管理员root的家目录</li>
+<li>&#x2F;sbin、&#x2F;usr&#x2F;sbin、&#x2F;usr&#x2F;local&#x2F;sbin：放置系统管理员使用的可执行命令，如 fdisk、shutdown、mount 等。与 &#x2F;bin 不同的是，这几个目录是给系统管理员 root 使用的命令，一般用户只能”查看”而不能设置和使用</li>
+<li>&#x2F;tmp：一般用户或正在执行的程序临时存放文件的目录，任何人都可以访问，重要数据不可放置在此目录下</li>
+<li>&#x2F;srv：服务启动之后需要访问的数据目录，如 www 服务需要访问的网页数据存放在 &#x2F;srv&#x2F;www 内</li>
+<li>&#x2F;usr：应用程序存放目录<ul>
+<li>&#x2F;usr&#x2F;bin：存放应用程序</li>
+<li>&#x2F;usr&#x2F;share：存放共享数据</li>
+<li>&#x2F;usr&#x2F;lib：存放不能直接运行的，却是许多程序运行所必需的一些函数库文件</li>
+<li>&#x2F;usr&#x2F;local：存放软件升级包</li>
+<li>&#x2F;usr&#x2F;share&#x2F;doc：系统说明文件存放目录</li>
+<li>&#x2F;usr&#x2F;share&#x2F;man：程序说明文件存放目录</li>
+</ul>
+</li>
+<li>&#x2F;var：放置系统执行过程中经常变化的文件<ul>
+<li>&#x2F;var&#x2F;log：随时更改的日志文件 </li>
+<li>&#x2F;var&#x2F;spool&#x2F;mail：邮件存放的目录</li>
+<li>&#x2F;var&#x2F;run：程序或服务启动后，其 PID 存放在该目录下</li>
+</ul>
+</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/linux/" class="category-chain-item">linux</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/linux/" class="print-no-link">#linux</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>文件和目录（理解）</div>
+      <div>http://aiden-coding.github.io/2023/07/02/linux/文件和目录（理解）/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Aiden</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年7月2日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/07/02/linux/Ubuntu%20%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E5%85%A5%E9%97%A8/" title="图形界面入门">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">图形界面入门</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/07/02/linux/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%8F%91%E5%B1%95%E5%8F%B2%EF%BC%88%E7%A7%91%E6%99%AE%E7%AB%A0%E8%8A%82%EF%BC%89/" title="操作系统的发展史（科普章节）">
+                        <span class="hidden-mobile">操作系统的发展史（科普章节）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  
+<script src="/js/nprogress.min.js"></script>
+
+
+<link rel="stylesheet" href="/css/nprogress.min.css">
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+
+<script src="/js/jquery.min.js"></script>
+
+
+<script src="/js/bootstrap.min.js"></script>
+
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('/js/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src='/js/clipboard.min.js'></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('/js/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('/js/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
